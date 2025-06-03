@@ -10,8 +10,42 @@ const app = express()
 const PORT = 3001
 const prisma = new PrismaClient()
 
-app.use(cors())
+// CORS設定
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://estimate-system-frontend.vercel.app'
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin matches allowed patterns
+    const isAllowed = allowedOrigins.includes(origin) || 
+                     /^https:\/\/.*\.vercel\.app$/.test(origin);
+    
+    console.log(`CORS check: ${origin} -> ${isAllowed ? 'ALLOWED' : 'BLOCKED'}`);
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
+
+// Preflight request handling
+app.options('*', cors(corsOptions))
 
 // Database connection test
 async function initializeDatabase() {
