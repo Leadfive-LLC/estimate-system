@@ -48,18 +48,26 @@ router.get("/google", (req: Request, res: Response) => {
 // 開発用テストログイン
 router.post("/test-login", async (req: Request, res: Response) => {
   try {
+    console.log("Test login request received:", req.body);
+    
     const { email, name } = req.body
 
     if (!email || !name) {
+      console.log("Missing email or name");
       return res.status(400).json({ error: "Email and name are required" })
     }
 
+    console.log("Searching for user with email:", email);
+    
     // ユーザーを作成または取得
     let user = await prisma.user.findUnique({
       where: { email }
     })
 
+    console.log("User found:", user ? "Yes" : "No");
+
     if (!user) {
+      console.log("Creating new user");
       user = await prisma.user.create({
         data: {
           email,
@@ -67,10 +75,13 @@ router.post("/test-login", async (req: Request, res: Response) => {
           role: "ESTIMATOR"
         }
       })
+      console.log("User created:", user.id);
     }
 
+    console.log("Generating token for user:", user.id);
     const token = generateToken(user.id)
     
+    console.log("Login successful for user:", user.email);
     res.json({
       token,
       user: {
@@ -83,7 +94,14 @@ router.post("/test-login", async (req: Request, res: Response) => {
     })
   } catch (error) {
     console.error("Test login error:", error)
-    res.status(500).json({ error: "Login failed" })
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    res.status(500).json({ 
+      error: "Login failed",
+      details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : "Unknown error" : undefined
+    })
   }
 })
 
