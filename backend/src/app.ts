@@ -55,8 +55,8 @@ async function initializeDatabase() {
     await prisma.$connect()
     console.log("✅ Database connected successfully")
     
-    // Generate Prisma client if needed
-    await prisma.$executeRaw`PRAGMA journal_mode=WAL;`
+    // SQLite compatible query
+    await prisma.$queryRaw`SELECT 1 as test`
     console.log("📊 Database initialized")
   } catch (error) {
     console.error("❌ Database connection failed:", error)
