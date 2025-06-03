@@ -1,5 +1,5 @@
 {
-  "name": "landscaping-estimate-system",
+  "name": "estimate-system",
   "version": "1.0.0",
   "description": "個人宅向け造園工事の見積から請求まで一元管理システム",
   "scripts": {

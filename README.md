@@ -46,8 +46,8 @@
 
 ### **1. プロジェクトのクローン**
 ```bash
-git clone <repository-url>
-cd 見積もりシステム
+git clone https://github.com/YOUR_USERNAME/estimate-system.git
+cd estimate-system
 ```
 
 ### **2. 依存関係のインストール**
@@ -76,7 +76,7 @@ npm run dev
 ## 📦 プロジェクト構成
 
 ```
-見積もりシステム/
+estimate-system/
 ├── frontend/          # React フロントエンド
 │   ├── src/
 │   │   ├── components/    # 再利用可能コンポーネント
