@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { apiRequest } from '../config/api';
 
 interface Item {
   id: string;
@@ -42,12 +43,7 @@ const EditItemPage: React.FC = () => {
 
   const fetchItem = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:3001/api/items/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiRequest(`/api/items/${id}`);
 
       if (response.ok) {
         const itemData = await response.json();
@@ -110,38 +106,28 @@ const EditItemPage: React.FC = () => {
     setSaving(true);
 
     try {
-      const token = localStorage.getItem('authToken');
-      const updateData = {
-        name: formData.name,
-        category: formData.category,
-        specification: formData.specification || null,
-        unit: formData.unit || null,
-        purchasePrice: formData.purchasePrice ? parseFloat(formData.purchasePrice) : null,
-        markupRate: parseFloat(formData.markupRate),
-        unitPrice: parseFloat(formData.unitPrice),
-        description: formData.description || null,
-        isActive: formData.isActive
-      };
-
-      const response = await fetch(`http://localhost:3001/api/items/${id}`, {
+      const response = await apiRequest(`/api/items/${id}`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updateData)
+        body: JSON.stringify({
+          name: formData.name,
+          category: formData.category,
+          specification: formData.specification,
+          unit: formData.unit,
+          purchasePrice: formData.purchasePrice ? parseFloat(formData.purchasePrice) : null,
+          markupRate: formData.markupRate ? parseFloat(formData.markupRate) : 1.5,
+          unitPrice: parseFloat(formData.unitPrice),
+          description: formData.description,
+          isActive: formData.isActive
+        })
       });
 
       if (response.ok) {
-        alert('項目が更新されました');
         navigate('/items');
       } else {
-        const error = await response.json();
-        alert(`更新に失敗しました: ${error.error}`);
+        console.error('Failed to update item');
       }
     } catch (error) {
       console.error('Error updating item:', error);
-      alert('更新中にエラーが発生しました');
     } finally {
       setSaving(false);
     }

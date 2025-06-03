@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiRequest } from '../config/api';
 
 interface Item {
   id: string;
@@ -40,12 +41,7 @@ const ItemsPage: React.FC = () => {
 
   const fetchItems = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:3001/api/items', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiRequest('/api/items');
 
       if (response.ok) {
         const data = await response.json();
@@ -57,6 +53,26 @@ const ItemsPage: React.FC = () => {
       console.error('Error fetching items:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdatePrice = async (itemId: string, newPrice: number) => {
+    try {
+      const response = await apiRequest(`/api/items/${itemId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ unitPrice: newPrice })
+      });
+
+      if (response.ok) {
+        const updatedItem = await response.json();
+        setItems(items.map(item => 
+          item.id === itemId ? updatedItem : item
+        ));
+      } else {
+        console.error('Failed to update item price');
+      }
+    } catch (error) {
+      console.error('Error updating item price:', error);
     }
   };
 

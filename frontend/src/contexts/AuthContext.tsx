@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getApiUrl, apiRequest } from '../config/api';
 
 interface User {
   id: string;
@@ -44,11 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const token = localStorage.getItem('authToken');
       if (token) {
         // トークンがある場合、サーバーに認証状態を確認
-        const response = await fetch('http://localhost:3001/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const response = await apiRequest('/api/auth/me');
         
         if (response.ok) {
           const userData = await response.json();
@@ -67,17 +64,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = () => {
     // Google OAuth ログインページにリダイレクト
-    window.location.href = 'http://localhost:3001/api/auth/google';
+    window.location.href = getApiUrl('/api/auth/google');
   };
 
   const testLogin = async (email: string, name: string) => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:3001/api/auth/test-login', {
+      const response = await apiRequest('/api/auth/test-login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ email, name })
       });
 
@@ -98,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:3001/api/auth/logout', { method: 'POST' });
+      await apiRequest('/api/auth/logout', { method: 'POST' });
       localStorage.removeItem('authToken');
       setUser(null);
     } catch (error) {
