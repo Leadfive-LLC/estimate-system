@@ -1,30 +1,12 @@
 import express from "express"
 import { PrismaClient } from "@prisma/client"
-import { verifyToken } from "../utils/jwt"
 import { auth, AuthenticatedRequest } from '../middleware/auth'
 
 const router = express.Router()
 const prisma = new PrismaClient()
 
-// 認証ミドルウェア
-const authenticate = (req: any, res: any, next: any) => {
-  try {
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "No token provided" })
-    }
-
-    const token = authHeader.substring(7)
-    const decoded = verifyToken(token)
-    req.userId = decoded.userId
-    next()
-  } catch (error) {
-    res.status(401).json({ error: "Invalid token" })
-  }
-}
-
 // 見積一覧取得
-router.get("/", auth, async (req: AuthenticatedRequest, res: express.Response) => {
+router.get("/", auth as any, (async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const userId = req.user?.id
     const { status } = req.query
@@ -64,10 +46,10 @@ router.get("/", auth, async (req: AuthenticatedRequest, res: express.Response) =
     console.error("Get estimates error:", error)
     res.status(500).json({ error: "Failed to fetch estimates" })
   }
-})
+}) as any)
 
 // 見積詳細取得
-router.get("/:id", auth, async (req: AuthenticatedRequest, res: express.Response) => {
+router.get("/:id", auth as any, (async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const { id } = req.params
     const userId = req.user?.id
@@ -122,10 +104,10 @@ router.get("/:id", auth, async (req: AuthenticatedRequest, res: express.Response
     console.error('Error fetching estimate detail:', error)
     res.status(500).json({ message: 'Internal server error' })
   }
-})
+}) as any)
 
 // 見積作成
-router.post("/", auth, async (req: AuthenticatedRequest, res: express.Response) => {
+router.post("/", auth as any, (async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const userId = req.user?.id
     const { 
@@ -178,10 +160,10 @@ router.post("/", auth, async (req: AuthenticatedRequest, res: express.Response) 
     console.error('Error creating estimate:', error)
     res.status(500).json({ message: 'Internal server error' })
   }
-})
+}) as any)
 
 // 見積更新
-router.put("/:id", authenticate, async (req: any, res: any) => {
+router.put("/:id", auth as any, (async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const { title, clientId, status, validUntil, notes, items } = req.body
 
@@ -198,65 +180,50 @@ router.put("/:id", authenticate, async (req: any, res: any) => {
         }
       })
 
-      // 見積項目を更新する場合
-      if (items) {
-        // 既存の見積項目を削除
-        await tx.estimateItem.deleteMany({
-          where: { estimateId: req.params.id }
-        })
+      // 既存の見積項目を削除
+      await tx.estimateItem.deleteMany({
+        where: { estimateId: req.params.id }
+      })
 
-        // 新しい見積項目を作成
-        if (items.length > 0) {
-          const estimateItems = items.map((item: any) => ({
+      // 新しい見積項目を作成
+      if (items && items.length > 0) {
+        await tx.estimateItem.createMany({
+          data: items.map((item: any) => ({
             estimateId: req.params.id,
             itemId: item.itemId,
-            quantity: parseFloat(item.quantity),
-            unitPrice: parseFloat(item.unitPrice),
-            amount: parseFloat(item.quantity) * parseFloat(item.unitPrice),
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            amount: item.amount,
             notes: item.notes
           }))
-
-          await tx.estimateItem.createMany({
-            data: estimateItems
-          })
-
-          // 合計金額を計算して更新
-          const totalAmount = estimateItems.reduce((sum: number, item: any) => sum + item.amount, 0)
-          await tx.estimate.update({
-            where: { id: req.params.id },
-            data: { totalAmount }
-          })
-        } else {
-          await tx.estimate.update({
-            where: { id: req.params.id },
-            data: { totalAmount: 0 }
-          })
-        }
+        })
       }
 
       return updatedEstimate
     })
 
-    // 更新した見積の詳細を取得
-    const updatedEstimate = await prisma.estimate.findUnique({
+    // 更新された見積を取得
+    const result = await prisma.estimate.findUnique({
       where: { id: req.params.id },
       include: {
         client: true,
         items: {
-          include: { item: true }
+          include: {
+            item: true
+          }
         }
       }
     })
 
-    res.json(updatedEstimate)
+    res.json(result)
   } catch (error) {
     console.error("Update estimate error:", error)
     res.status(500).json({ error: "Failed to update estimate" })
   }
-})
+}) as any)
 
 // 見積削除
-router.delete("/:id", authenticate, async (req: any, res: any) => {
+router.delete("/:id", auth as any, (async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     await prisma.estimate.delete({
       where: { id: req.params.id }
@@ -267,6 +234,6 @@ router.delete("/:id", authenticate, async (req: any, res: any) => {
     console.error("Delete estimate error:", error)
     res.status(500).json({ error: "Failed to delete estimate" })
   }
-})
+}) as any)
 
 export default router
