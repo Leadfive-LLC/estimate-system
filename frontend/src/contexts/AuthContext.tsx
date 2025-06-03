@@ -70,21 +70,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const testLogin = async (email: string, name: string) => {
     try {
       setIsLoading(true);
+      console.log('Attempting test login with:', { email, name });
+      
       const response = await apiRequest('/api/auth/test-login', {
         method: 'POST',
         body: JSON.stringify({ email, name })
       });
 
+      console.log('Login response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('Login successful:', data);
         localStorage.setItem('authToken', data.token);
         setUser(data.user);
       } else {
-        throw new Error('Login failed');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Login failed with status:', response.status, errorData);
+        throw new Error(errorData.error || `Login failed with status ${response.status}`);
       }
     } catch (error) {
       console.error('Test login failed:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('ネットワークエラーまたは予期しないエラーが発生しました');
+      }
     } finally {
       setIsLoading(false);
     }
