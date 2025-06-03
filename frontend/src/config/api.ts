@@ -1,7 +1,7 @@
 // API設定
 export const API_CONFIG = {
   baseURL: process.env.NODE_ENV === 'production' 
-    ? 'https://estimate-system-production.up.railway.com' 
+    ? 'https://estimate-system-production.up.railway.app' 
     : 'http://localhost:3001',
   endpoints: {
     health: '/api/health',
