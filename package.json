@@ -1,0 +1,35 @@
+{
+  "name": "landscaping-estimate-system",
+  "version": "1.0.0",
+  "description": "個人宅向け造園工事の見積から請求まで一元管理システム",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "cd backend && npm start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:studio": "cd backend && npx prisma studio",
+    "db:seed": "cd backend && npx ts-node prisma/seed.ts"
+  },
+  "keywords": [
+    "landscaping",
+    "estimate",
+    "japanese",
+    "construction",
+    "pricing",
+    "fullstack"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
