@@ -11,41 +11,43 @@ const PORT = 3001
 const prisma = new PrismaClient()
 
 // CORS設定
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'https://estimate-system-frontend.vercel.app'
-    ];
-    
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin matches allowed patterns
-    const isAllowed = allowedOrigins.includes(origin) || 
-                     /^https:\/\/.*\.vercel\.app$/.test(origin);
-    
-    console.log(`CORS check: ${origin} -> ${isAllowed ? 'ALLOWED' : 'BLOCKED'}`);
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://estimate-system-frontend.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-  preflightContinue: false,
-  optionsSuccessStatus: 200
-}
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-app.use(cors(corsOptions))
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://estimate-system-frontend.vercel.app'
+  ];
+
+  console.log(`Incoming request from origin: ${origin}`);
+  
+  if (!origin || allowedOrigins.includes(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Max-Age', '86400');
+  
+  if (req.method === 'OPTIONS') {
+    console.log('Handling preflight request');
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
 app.use(express.json())
 
 // Preflight request handling
-app.options('*', cors(corsOptions))
+app.options('*', cors())
 
 // Database connection test
 async function initializeDatabase() {
