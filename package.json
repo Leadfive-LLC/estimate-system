@@ -1,12 +1,13 @@
 {
   "name": "estimate-system",
   "version": "1.0.0",
-  "description": "個人宅向け造園工事の見積から請求まで一元管理システム",
+  "description": "Landscaping estimate management system",
+  "main": "backend/dist/app.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "cd backend && npm run dev",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start",
-    "build": "npm run build:frontend && npm run build:backend",
+    "build": "cd backend && npm install && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && npm run build",
     "start": "cd backend && npm start",
@@ -17,13 +18,10 @@
   },
   "keywords": [
     "landscaping",
-    "estimate",
-    "japanese",
-    "construction",
-    "pricing",
-    "fullstack"
+    "estimates",
+    "management"
   ],
-  "author": "Your Name",
+  "author": "",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

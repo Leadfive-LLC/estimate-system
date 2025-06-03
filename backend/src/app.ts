@@ -7,7 +7,7 @@ import itemRoutes from "./routes/items"
 import estimateRoutes from "./routes/estimates"
 
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 const prisma = new PrismaClient()
 
 // CORS設定
