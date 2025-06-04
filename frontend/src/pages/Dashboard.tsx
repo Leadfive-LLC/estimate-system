@@ -133,47 +133,39 @@ const Dashboard: React.FC = () => {
 
           {/* クイックアクション */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <div className="flex items-center space-x-4 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-slate-800">クイックアクション</h3>
+              <h3 className="text-xl font-bold text-slate-800">クイックアクション</h3>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <button
                 onClick={() => navigate('/estimates/new')}
-                className="w-full text-left p-6 bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 rounded-xl transition-all duration-200 group shadow-sm hover:shadow-md border border-indigo-100"
+                className="w-full text-left p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 rounded-lg transition-all duration-200 group border border-indigo-100"
               >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-                    <span className="text-2xl">📝</span>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                    <span className="text-lg">📝</span>
                   </div>
                   <div>
-                    <div className="font-bold text-slate-800 group-hover:text-indigo-700 text-lg">新規見積作成</div>
-                    <div className="text-slate-600 mt-1">新しい見積を作成</div>
+                    <div className="font-semibold text-slate-800 group-hover:text-indigo-700">新規見積作成</div>
                   </div>
-                  <svg className="w-5 h-5 text-indigo-500 group-hover:translate-x-1 transition-transform duration-200 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </div>
               </button>
               <button
                 onClick={() => navigate('/clients')}
-                className="w-full text-left p-6 bg-gradient-to-r from-emerald-50 to-emerald-100/50 hover:from-emerald-100 hover:to-emerald-200/50 rounded-xl transition-all duration-200 group shadow-sm hover:shadow-md border border-emerald-100"
+                className="w-full text-left p-4 bg-gradient-to-r from-emerald-50 to-emerald-100/50 hover:from-emerald-100 hover:to-emerald-200/50 rounded-lg transition-all duration-200 group border border-emerald-100"
               >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
-                    <span className="text-2xl">👥</span>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                    <span className="text-lg">👥</span>
                   </div>
                   <div>
-                    <div className="font-bold text-slate-800 group-hover:text-emerald-700 text-lg">顧客追加</div>
-                    <div className="text-slate-600 mt-1">新規顧客を登録</div>
+                    <div className="font-semibold text-slate-800 group-hover:text-emerald-700">顧客追加</div>
                   </div>
-                  <svg className="w-5 h-5 text-emerald-500 group-hover:translate-x-1 transition-transform duration-200 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </div>
               </button>
             </div>
