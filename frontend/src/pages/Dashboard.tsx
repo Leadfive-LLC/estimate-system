@@ -7,37 +7,6 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const menuItems = [
-    {
-      title: '見積作成',
-      description: '新しい見積を作成します',
-      icon: '📝',
-      path: '/estimates/new',
-      color: 'bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700'
-    },
-    {
-      title: '見積一覧',
-      description: '作成済みの見積を確認・編集します',
-      icon: '📋',
-      path: '/estimates',
-      color: 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700'
-    },
-    {
-      title: '顧客管理',
-      description: '顧客情報を管理します',
-      icon: '👥',
-      path: '/clients',
-      color: 'bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
-    },
-    {
-      title: '単価マスタ',
-      description: '工事項目の単価を管理します',
-      icon: '💰',
-      path: '/items',
-      color: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
-    }
-  ];
-
   const handleMenuClick = (path: string) => {
     navigate(path);
   };
@@ -78,20 +47,53 @@ const Dashboard: React.FC = () => {
 
         {/* メニューカード */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {menuItems.map((item, index) => (
-            <div
-              key={index}
-              className={`${item.color} text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group`}
-              onClick={() => handleMenuClick(item.path)}
-            >
-              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                {item.icon}
-              </div>
-              
-              <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-              <p className="text-white/90 leading-relaxed">{item.description}</p>
+          {/* 見積作成 - インディゴブルー */}
+          <div
+            className="bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            onClick={() => handleMenuClick('/estimates/new')}
+          >
+            <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+              📝
             </div>
-          ))}
+            <h3 className="text-2xl font-bold mb-3">見積作成</h3>
+            <p className="text-white/90 leading-relaxed">新しい見積を作成します</p>
+          </div>
+
+          {/* 見積一覧 - エメラルドグリーン */}
+          <div
+            className="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            onClick={() => handleMenuClick('/estimates')}
+          >
+            <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+              📋
+            </div>
+            <h3 className="text-2xl font-bold mb-3">見積一覧</h3>
+            <p className="text-white/90 leading-relaxed">作成済みの見積を確認・編集します</p>
+          </div>
+
+          {/* 顧客管理 - パープル */}
+          <div
+            className="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            onClick={() => handleMenuClick('/clients')}
+          >
+            <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+              👥
+            </div>
+            <h3 className="text-2xl font-bold mb-3">顧客管理</h3>
+            <p className="text-white/90 leading-relaxed">顧客情報を管理します</p>
+          </div>
+
+          {/* 単価マスタ - アンバーオレンジ */}
+          <div
+            className="bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            onClick={() => handleMenuClick('/items')}
+          >
+            <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+              💰
+            </div>
+            <h3 className="text-2xl font-bold mb-3">単価マスタ</h3>
+            <p className="text-white/90 leading-relaxed">工事項目の単価を管理します</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
