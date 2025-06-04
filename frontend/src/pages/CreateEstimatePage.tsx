@@ -311,7 +311,8 @@ const CreateEstimatePage: React.FC = () => {
                           <p className="text-sm text-amber-700 mt-1">見積を作成するには、まず顧客を登録する必要があります。</p>
                           <button
                             onClick={() => navigate('/clients')}
-                            className="mt-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg"
+                            className="mt-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg"
+                            style={{background: 'linear-gradient(to right, #10b981, #059669)', border: 'none'}}
                           >
                             顧客管理画面へ移動
                           </button>
