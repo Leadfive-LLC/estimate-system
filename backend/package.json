@@ -6,7 +6,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/app.ts",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "migrate": "npx prisma migrate deploy",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx prisma db seed"
   },
   "keywords": [],
   "author": "",
