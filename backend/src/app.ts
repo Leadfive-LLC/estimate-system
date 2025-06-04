@@ -6,6 +6,11 @@ import clientRoutes from "./routes/clients"
 import itemRoutes from "./routes/items"
 import estimateRoutes from "./routes/estimates"
 
+// Railway環境での環境変数設定
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "file:./dev.db"
+}
+
 const app = express()
 const PORT = process.env.PORT || 3001
 const prisma = new PrismaClient()
