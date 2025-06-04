@@ -134,33 +134,49 @@ async function runMigrations() {
 
 // 直接SQL実行（バックアップ方法）
 async function runDirectSQL() {
-  const createUserTable = `
-    CREATE TABLE IF NOT EXISTS "User" (
-      "id" TEXT NOT NULL,
-      "email" TEXT NOT NULL,
-      "name" TEXT NOT NULL,
-      "avatar" TEXT,
-      "googleId" TEXT,
-      "role" TEXT NOT NULL DEFAULT 'ESTIMATOR',
-      "isActive" BOOLEAN NOT NULL DEFAULT true,
-      "lastLoginAt" TIMESTAMP(3),
-      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-    );
-    CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
-  `;
-  
-  await prisma.$executeRawUnsafe(createUserTable);
-  
-  // テストユーザー作成
-  await prisma.$executeRawUnsafe(`
-    INSERT INTO "User" ("id", "email", "name", "role") 
-    VALUES ('test-user-1', 'test@example.com', 'テストユーザー', 'ESTIMATOR')
-    ON CONFLICT ("email") DO NOTHING;
-  `);
-  
-  console.log('✅ Direct SQL execution completed');
+  try {
+    // 既にUserテーブルが存在するかチェック
+    const userCount = await prisma.user.count();
+    console.log(`✅ User table exists with ${userCount} records`);
+    return; // テーブルが既に存在する場合はスキップ
+  } catch (error) {
+    console.log('🔄 User table does not exist, creating...');
+  }
+
+  try {
+    // Userテーブル作成
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "User" (
+        "id" TEXT NOT NULL,
+        "email" TEXT NOT NULL,
+        "name" TEXT NOT NULL,
+        "avatar" TEXT,
+        "googleId" TEXT,
+        "role" TEXT NOT NULL DEFAULT 'ESTIMATOR',
+        "isActive" BOOLEAN NOT NULL DEFAULT true,
+        "lastLoginAt" TIMESTAMP(3),
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+      )
+    `);
+
+    // インデックス作成（分割実行）
+    await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email")`);
+    await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "User_googleId_key" ON "User"("googleId")`);
+    
+    // テストユーザー作成
+    await prisma.$executeRawUnsafe(`
+      INSERT INTO "User" ("id", "email", "name", "role") 
+      VALUES ('test-user-1', 'test@example.com', 'テストユーザー', 'ESTIMATOR')
+      ON CONFLICT ("email") DO NOTHING
+    `);
+    
+    console.log('✅ Direct SQL execution completed');
+  } catch (sqlError) {
+    console.log('⚠️ Some SQL operations failed, but User table may already exist:', sqlError);
+    // エラーがあってもアプリケーションを続行（テーブルが既に存在する可能性）
+  }
 }
 
 // Root endpoint with API documentation
