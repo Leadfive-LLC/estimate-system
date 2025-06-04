@@ -15,10 +15,28 @@ if (!process.env.DATABASE_URL) {
   } else {
     process.env.DATABASE_URL = "file:./dev.db";
   }
+} else {
+  // DATABASE_URLの形式を修正（RailwayでPostgreSQL URLが正しくない場合）
+  let dbUrl = process.env.DATABASE_URL;
+  
+  // postgres:// を postgresql:// に変換
+  if (dbUrl.startsWith('postgres://')) {
+    dbUrl = dbUrl.replace('postgres://', 'postgresql://');
+    process.env.DATABASE_URL = dbUrl;
+    console.log('🔧 Converted postgres:// to postgresql://');
+  }
+  
+  // URLの形式確認
+  if (!dbUrl.startsWith('postgresql://') && process.env.NODE_ENV === 'production') {
+    console.error('❌ DATABASE_URL must start with postgresql:// in production');
+    console.error('📝 Current DATABASE_URL format:', dbUrl.substring(0, 20) + '...');
+    process.exit(1);
+  }
 }
 
 console.log('🔧 Environment:', process.env.NODE_ENV);
-console.log('🔧 Database URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+console.log('🔧 Database URL format:', process.env.DATABASE_URL ? 
+  process.env.DATABASE_URL.substring(0, 15) + '...' : 'Not set');
 
 const app = express()
 const PORT = process.env.PORT || 3001
