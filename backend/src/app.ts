@@ -8,8 +8,17 @@ import estimateRoutes from "./routes/estimates"
 
 // Railway環境での環境変数設定
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = "file:./dev.db"
+  // 開発環境ではSQLite、本番環境では環境変数が必要
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ DATABASE_URL environment variable is required in production');
+    process.exit(1);
+  } else {
+    process.env.DATABASE_URL = "file:./dev.db";
+  }
 }
+
+console.log('🔧 Environment:', process.env.NODE_ENV);
+console.log('🔧 Database URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
 
 const app = express()
 const PORT = process.env.PORT || 3001
