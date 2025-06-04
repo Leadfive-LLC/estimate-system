@@ -86,33 +86,40 @@ const EstimatesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">見積データを読み込み中...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">見積データを読み込み中...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* ヘッダー */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/90 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/')}
-                className="text-gray-600 hover:text-gray-900"
+                className="flex items-center text-slate-600 hover:text-slate-900 transition-colors"
               >
-                ← ダッシュボード
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                ダッシュボード
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">見積一覧</h1>
+              <div className="h-6 w-px bg-slate-300"></div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">見積一覧</h1>
+                <p className="text-slate-600 mt-1 font-medium">作成済みの見積を管理します</p>
+              </div>
             </div>
             <button
               onClick={() => navigate('/estimates/new')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-lg"
             >
               + 新規見積作成
             </button>
@@ -123,54 +130,65 @@ const EstimatesPage: React.FC = () => {
       {/* メインコンテンツ */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* ステータスフィルタ */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">ステータス フィルター</h2>
+              <p className="text-slate-600 text-sm">見積の状態で絞り込み表示</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => handleStatusFilter('')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 statusFilter === '' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
               すべて
             </button>
             <button
               onClick={() => handleStatusFilter('DRAFT')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 statusFilter === 'DRAFT' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
               下書き
             </button>
             <button
               onClick={() => handleStatusFilter('SENT')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 statusFilter === 'SENT' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
               送付済み
             </button>
             <button
               onClick={() => handleStatusFilter('APPROVED')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 statusFilter === 'APPROVED' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
               承認済み
             </button>
             <button
               onClick={() => handleStatusFilter('REJECTED')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 statusFilter === 'REJECTED' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
               否認
@@ -179,25 +197,34 @@ const EstimatesPage: React.FC = () => {
         </div>
 
         {/* 見積一覧 */}
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+            <h2 className="text-xl font-bold text-slate-800">
               見積一覧 ({estimates.length}件)
               {statusFilter && ` - ${statusFilter}`}
             </h2>
           </div>
           
           {estimates.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              {statusFilter ? `${statusFilter}の見積が見つかりません` : 'まだ見積が作成されていません。'}
-              <div className="mt-4">
-                <button
-                  onClick={() => navigate('/estimates/new')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  最初の見積を作成する
-                </button>
+            <div className="p-12 text-center">
+              <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
               </div>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
+                {statusFilter ? `${statusFilter}の見積が見つかりません` : 'まだ見積が作成されていません'}
+              </h3>
+              <p className="text-slate-600 mb-6">最初の見積を作成して始めましょう。</p>
+              <button
+                onClick={() => navigate('/estimates/new')}
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-lg transition-colors font-medium inline-flex items-center space-x-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>最初の見積を作成する</span>
+              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">

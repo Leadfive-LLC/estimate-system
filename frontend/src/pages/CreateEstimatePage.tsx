@@ -234,7 +234,7 @@ const CreateEstimatePage: React.FC = () => {
               <button
                 onClick={() => handleSubmit('DRAFT')}
                 disabled={saving}
-                className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-lg disabled:opacity-50"
+                className="bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-lg disabled:opacity-50 border border-slate-500"
               >
                 {saving ? '保存中...' : '下書き保存'}
               </button>
@@ -748,7 +748,7 @@ const CreateEstimatePage: React.FC = () => {
                   </p>
                   <button
                     onClick={() => setShowItemSelector(false)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors font-medium"
+                    className="bg-slate-200 hover:bg-slate-300 text-slate-800 px-6 py-3 rounded-lg transition-colors font-medium border border-slate-300"
                   >
                     閉じる
                   </button>

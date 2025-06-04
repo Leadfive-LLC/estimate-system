@@ -245,7 +245,7 @@ const ClientsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg transition-colors font-medium"
+                  className="bg-slate-200 hover:bg-slate-300 text-slate-800 px-8 py-3 rounded-lg transition-colors font-medium border border-slate-300"
                 >
                   キャンセル
                 </button>
