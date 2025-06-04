@@ -61,24 +61,31 @@ const ClientsPage: React.FC = () => {
     setSubmitting(true);
     
     try {
+      console.log('Submitting client data:', formData);
+      
       const response = await apiRequest('/api/clients', {
         method: 'POST',
         body: JSON.stringify(formData)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       if (response.ok) {
         const newClient = await response.json();
+        console.log('New client created:', newClient);
         setClients([newClient, ...clients]);
         setFormData({ name: '', email: '', phone: '', address: '', notes: '' });
         setShowAddForm(false);
         alert('顧客を登録しました！');
       } else {
-        console.error('Failed to create client');
-        alert('顧客の登録に失敗しました。');
+        const errorData = await response.text();
+        console.error('Failed to create client:', response.status, errorData);
+        alert(`顧客の登録に失敗しました。\nエラー: ${response.status} ${response.statusText}\n詳細: ${errorData}`);
       }
     } catch (error) {
       console.error('Error creating client:', error);
-      alert('顧客の登録中にエラーが発生しました。');
+      alert(`顧客の登録中にエラーが発生しました。\n詳細: ${error instanceof Error ? error.message : '不明なエラー'}`);
     } finally {
       setSubmitting(false);
     }
