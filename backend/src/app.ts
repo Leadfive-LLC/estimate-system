@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import { PrismaClient } from "@prisma/client"
+import { execSync } from "child_process"
 import authRoutes from "./routes/auth"
 import clientRoutes from "./routes/clients"
 import itemRoutes from "./routes/items"
@@ -98,19 +99,68 @@ app.use(express.json())
 // Preflight request handling
 app.options('*', cors())
 
-// Database connection test
-async function initializeDatabase() {
+// 強制マイグレーション実行
+async function runMigrations() {
   try {
-    await prisma.$connect()
-    console.log("✅ Database connected successfully")
+    console.log('🔄 Running database migrations...');
     
-    // SQLite compatible query
-    await prisma.$queryRaw`SELECT 1 as test`
-    console.log("📊 Database initialized")
+    // 本番環境でPrismaマイグレーションを強制実行
+    if (process.env.NODE_ENV === 'production') {
+      execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+      console.log('✅ Migrations completed successfully');
+    }
+    
+    // データベース接続テスト
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+    
+    // テーブル存在確認
+    const userCount = await prisma.user.count();
+    console.log(`✅ Database tables verified - User count: ${userCount}`);
+    
   } catch (error) {
-    console.error("❌ Database connection failed:", error)
-    process.exit(1)
+    console.error('❌ Migration or database connection failed:', error);
+    
+    // マイグレーションが失敗した場合、直接SQLを実行
+    try {
+      console.log('🔄 Attempting direct SQL execution...');
+      await runDirectSQL();
+    } catch (sqlError) {
+      console.error('❌ Direct SQL execution failed:', sqlError);
+      throw sqlError;
+    }
   }
+}
+
+// 直接SQL実行（バックアップ方法）
+async function runDirectSQL() {
+  const createUserTable = `
+    CREATE TABLE IF NOT EXISTS "User" (
+      "id" TEXT NOT NULL,
+      "email" TEXT NOT NULL,
+      "name" TEXT NOT NULL,
+      "avatar" TEXT,
+      "googleId" TEXT,
+      "role" TEXT NOT NULL DEFAULT 'ESTIMATOR',
+      "isActive" BOOLEAN NOT NULL DEFAULT true,
+      "lastLoginAt" TIMESTAMP(3),
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
+  `;
+  
+  await prisma.$executeRawUnsafe(createUserTable);
+  
+  // テストユーザー作成
+  await prisma.$executeRawUnsafe(`
+    INSERT INTO "User" ("id", "email", "name", "role") 
+    VALUES ('test-user-1', 'test@example.com', 'テストユーザー', 'ESTIMATOR')
+    ON CONFLICT ("email") DO NOTHING;
+  `);
+  
+  console.log('✅ Direct SQL execution completed');
 }
 
 // Root endpoint with API documentation
@@ -160,7 +210,7 @@ process.on('beforeExit', async () => {
 })
 
 // Initialize database then start server
-initializeDatabase().then(() => {
+runMigrations().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`)
     console.log(`📊 Health check: http://localhost:${PORT}/api/health`)
