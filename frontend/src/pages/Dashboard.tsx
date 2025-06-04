@@ -13,40 +13,28 @@ const Dashboard: React.FC = () => {
       description: '新しい見積を作成します',
       icon: '📝',
       path: '/estimates/new',
-      color: 'from-indigo-500 to-indigo-600',
-      hoverColor: 'hover:from-indigo-600 hover:to-indigo-700',
-      bgColor: 'bg-indigo-50',
-      textColor: 'text-indigo-600'
+      color: 'bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700'
     },
     {
       title: '見積一覧',
       description: '作成済みの見積を確認・編集します',
       icon: '📋',
       path: '/estimates',
-      color: 'from-emerald-500 to-emerald-600',
-      hoverColor: 'hover:from-emerald-600 hover:to-emerald-700',
-      bgColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600'
+      color: 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700'
     },
     {
       title: '顧客管理',
       description: '顧客情報を管理します',
       icon: '👥',
       path: '/clients',
-      color: 'from-purple-500 to-purple-600',
-      hoverColor: 'hover:from-purple-600 hover:to-purple-700',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600'
+      color: 'bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
     },
     {
       title: '単価マスタ',
       description: '工事項目の単価を管理します',
       icon: '💰',
       path: '/items',
-      color: 'from-amber-500 to-amber-600',
-      hoverColor: 'hover:from-amber-600 hover:to-amber-700',
-      bgColor: 'bg-amber-50',
-      textColor: 'text-amber-600'
+      color: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
     }
   ];
 
@@ -93,26 +81,15 @@ const Dashboard: React.FC = () => {
           {menuItems.map((item, index) => (
             <div
               key={index}
-              className="group relative bg-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl border border-gray-100"
+              className={`${item.color} text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group`}
               onClick={() => handleMenuClick(item.path)}
             >
-              {/* グラデーション背景 */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}></div>
-              
-              {/* アイコン背景 */}
-              <div className={`w-16 h-16 ${item.bgColor} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <span className="text-3xl">{item.icon}</span>
+              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                {item.icon}
               </div>
               
-              <h3 className="text-2xl font-bold text-slate-800 mb-3 group-hover:text-slate-900">{item.title}</h3>
-              <p className="text-slate-600 leading-relaxed mb-6">{item.description}</p>
-              
-              <div className={`flex items-center ${item.textColor} font-medium group-hover:translate-x-1 transition-transform duration-300`}>
-                <span>詳細を見る</span>
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+              <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
+              <p className="text-white/90 leading-relaxed">{item.description}</p>
             </div>
           ))}
         </div>
