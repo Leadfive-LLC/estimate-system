@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-const JWT_SECRET = process.env.JWT_SECRET || "estimate-system-secret-key-2025"
+const JWT_SECRET = "estimate-system-secret-key-2025-railway-production"
 
 export const generateToken = (userId: string) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" })
