@@ -621,7 +621,7 @@ const CreateEstimatePage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setShowItemSelector(false)}
-                    className="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
+                    className="w-10 h-10 bg-white/30 hover:bg-white/40 text-white rounded-full flex items-center justify-center transition-colors border border-white/20"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
