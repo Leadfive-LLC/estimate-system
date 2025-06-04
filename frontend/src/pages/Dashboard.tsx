@@ -45,11 +45,12 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* メニューカード */}
+        {/* メニューカード - カラフルな背景色設定 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* 見積作成 - インディゴブルー */}
           <div
             className="bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            style={{ background: 'linear-gradient(to bottom right, #6366f1, #4f46e5)' }}
             onClick={() => handleMenuClick('/estimates/new')}
           >
             <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -62,6 +63,7 @@ const Dashboard: React.FC = () => {
           {/* 見積一覧 - エメラルドグリーン */}
           <div
             className="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            style={{ background: 'linear-gradient(to bottom right, #10b981, #059669)' }}
             onClick={() => handleMenuClick('/estimates')}
           >
             <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -74,6 +76,7 @@ const Dashboard: React.FC = () => {
           {/* 顧客管理 - パープル */}
           <div
             className="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            style={{ background: 'linear-gradient(to bottom right, #8b5cf6, #7c3aed)' }}
             onClick={() => handleMenuClick('/clients')}
           >
             <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -86,6 +89,7 @@ const Dashboard: React.FC = () => {
           {/* 単価マスタ - アンバーオレンジ */}
           <div
             className="bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl group"
+            style={{ background: 'linear-gradient(to bottom right, #f59e0b, #d97706)' }}
             onClick={() => handleMenuClick('/items')}
           >
             <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
