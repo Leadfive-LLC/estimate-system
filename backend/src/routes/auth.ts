@@ -49,6 +49,7 @@ router.get("/google", (req: Request, res: Response) => {
 router.post("/test-login", async (req: Request, res: Response) => {
   try {
     console.log("Test login request received:", req.body);
+    console.log("Database connection status: attempting connection...");
     
     const { email, name } = req.body
 
@@ -58,6 +59,18 @@ router.post("/test-login", async (req: Request, res: Response) => {
     }
 
     console.log("Searching for user with email:", email);
+    
+    // データベース接続テスト
+    try {
+      await prisma.$connect();
+      console.log("✅ Database connection successful");
+    } catch (dbError) {
+      console.error("❌ Database connection failed:", dbError);
+      return res.status(500).json({ 
+        error: "Database connection failed",
+        details: process.env.NODE_ENV === 'development' ? (dbError instanceof Error ? dbError.message : "Unknown database error") : undefined
+      });
+    }
     
     // ユーザーを作成または取得
     let user = await prisma.user.findUnique({
@@ -76,6 +89,13 @@ router.post("/test-login", async (req: Request, res: Response) => {
         }
       })
       console.log("User created:", user.id);
+    } else {
+      // 既存ユーザーの最終ログイン時刻を更新
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() }
+      });
+      console.log("User login updated:", user.id);
     }
 
     console.log("Generating token for user:", user.id);
@@ -96,11 +116,22 @@ router.post("/test-login", async (req: Request, res: Response) => {
     console.error("Test login error:", error)
     console.error("Error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
+      code: (error as any)?.code,
+      meta: (error as any)?.meta
     });
+    
+    // Prismaエラーの詳細な処理
+    if (error instanceof Error && error.message.includes('database')) {
+      return res.status(503).json({ 
+        error: "Database service unavailable",
+        details: process.env.NODE_ENV === 'development' ? error.message : "Database connection failed"
+      });
+    }
+    
     res.status(500).json({ 
       error: "Login failed",
-      details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : "Unknown error" : undefined
+      details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : "Unknown error") : "Internal server error"
     })
   }
 })

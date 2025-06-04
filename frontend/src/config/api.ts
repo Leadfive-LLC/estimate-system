@@ -37,8 +37,52 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
       ...defaultHeaders,
       ...options.headers,
     },
+    // タイムアウトを15秒に設定
+    signal: AbortSignal.timeout(15000),
   };
 
-  const response = await fetch(getApiUrl(endpoint), config);
-  return response;
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`API Request (attempt ${attempt}): ${config.method || 'GET'} ${getApiUrl(endpoint)}`);
+      
+      const response = await fetch(getApiUrl(endpoint), config);
+      
+      console.log(`API Response: ${response.status} ${response.statusText}`);
+      
+      // 成功の場合はそのまま返す
+      if (response.ok || attempt === maxRetries) {
+        return response;
+      }
+      
+      // 5xx エラーの場合のみリトライ
+      if (response.status >= 500 && attempt < maxRetries) {
+        console.log(`Retrying due to server error (${response.status})...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // 指数バックオフ
+        continue;
+      }
+      
+      return response;
+      
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      console.error(`API Request failed (attempt ${attempt}):`, lastError);
+      
+      // ネットワークエラーまたはタイムアウト エラーの場合のみリトライ
+      if (attempt < maxRetries && (
+        error instanceof TypeError || 
+        (error instanceof Error && error.name === 'AbortError')
+      )) {
+        console.log(`Retrying due to network error...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
+      
+      throw error;
+    }
+  }
+  
+  throw lastError || new Error('All retry attempts failed');
 }; 

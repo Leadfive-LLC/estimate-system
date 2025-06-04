@@ -17,23 +17,40 @@ const prisma = new PrismaClient()
 
 // CORS設定
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://estimate-system-frontend.vercel.app'],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://estimate-system-frontend.vercel.app'
+    ];
+    
+    // すべてのVercelドメインを許可
+    if (!origin || 
+        allowedOrigins.includes(origin) || 
+        /^https:\/\/.*\.vercel\.app$/.test(origin) ||
+        /^http:\/\/localhost:\d+$/.test(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // 開発中は全て許可
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  maxAge: 86400 // 24時間
 }));
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'https://estimate-system-frontend.vercel.app'
-  ];
-
-  console.log(`Incoming request from origin: ${origin}`);
   
-  if (!origin || allowedOrigins.includes(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin)) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} from origin: ${origin || 'no-origin'}`);
+  
+  // VercelのプレビューURLも含めて全て許可
+  if (origin && (/^https:\/\/.*\.vercel\.app$/.test(origin) || /^http:\/\/localhost:\d+$/.test(origin))) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
   }
   
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -42,7 +59,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Max-Age', '86400');
   
   if (req.method === 'OPTIONS') {
-    console.log('Handling preflight request');
+    console.log('Handling preflight request for:', req.path);
     return res.status(200).end();
   }
   
